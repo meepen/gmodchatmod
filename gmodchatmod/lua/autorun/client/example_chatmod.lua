@@ -5,7 +5,7 @@ surface.CreateFont("new_chatfont", {
 });
 
 local function PaintMain(self)
-	if(not chat.IsActive()) then return true; end
+	if(not chat.IsOpen()) then return true; end
 	
 	local alpha_mod = chat.GetInput():GetAlpha() / 255;
 	
