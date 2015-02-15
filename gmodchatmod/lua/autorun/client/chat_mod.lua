@@ -76,14 +76,6 @@ end);
 		
 
 local old = {
-	--[[
-	[panel]	= {
-		w = 100;
-		h = 100;
-		x = 100;
-		y = 100;
-	};
-	]]--
 };
 
 local function setup(pnl)
@@ -110,7 +102,6 @@ hook.Add("ChatModInitialize", "Example", function(chat)
 	local input_main = chat:Get(CHAT_INPUT_LINE);
 	local filters = chat:Get(CHAT_FILTER_BUTTON);
 	
-	--[[ for restoration of chat ]]--
 	setup(main);
 	setup(history);
 	setup(input);
