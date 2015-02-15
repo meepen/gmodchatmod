@@ -18,15 +18,23 @@ local CHAT_MOD = {
 };
 
 hook.Add("StartChat", "TrackChat", function()
-	CHAT_MOD.active = true;
+	CHAT_MOD.open = true;
 end);
 
 hook.Add("FinishChat", "TrackChat", function()
-	CHAT_MOD.active = false;
+	CHAT_MOD.open = false;
 end);
 
+function chat.IsOpen()
+	return CHAT_MOD.open;
+end
+
 function chat.IsActive()
-	return CHAT_MOD.active;
+	chat.GetInput():IsKeyboardInputEnabled();
+end
+
+function chat.IsTyping()
+	return vgui.GetKeyboardFocus() == chat.GetInput();
 end
 
 function CHAT_MOD:Resize(w,h)
