@@ -17,6 +17,18 @@ CHAT_MOD = {
 	old = {};
 };
 
+hook.Add("StartChat", "TrackChat", function()
+	CHAT_MOD.active = true;
+end);
+
+hook.Add("FinishChat", "TrackChat", function()
+	CHAT_MOD.active = false;
+end);
+
+function chat.IsActive()
+	return CHAT_MOD.active;
+end
+
 function CHAT_MOD:Resize(w,h)
 	
 	local main = self:Get(CHAT_MAIN);
