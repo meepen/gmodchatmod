@@ -16,8 +16,8 @@ local function PaintMain(self)
 	return true;
 end
 
-hook.Add("ChatModInitialize", "Example", function(chtmd)
-	chtmd:SetFont("new_chatfont");
+hook.Add("ChatModInitialize", "Example", function()
+	chat.SetFont("new_chatfont");
 
 	local pnl = chat.GetPanel();
 	chat.Resize(ScrW() / 4 * 3, pnl:GetTall());

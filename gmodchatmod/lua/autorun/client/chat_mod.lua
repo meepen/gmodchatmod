@@ -1,11 +1,11 @@
-if(CHAT_MOD) then return; end
-CHAT_HISTORY 		= "history";
-CHAT_FILTER_BUTTON	= "filters";
-CHAT_INPUT_LINE		= "input_main";
-CHAT_INPUT			= "input";
-CHAT_MAIN			= "main";
+if(chat.IsActive) then return; end
+local CHAT_HISTORY 		= "history";
+local CHAT_FILTER_BUTTON	= "filters";
+local CHAT_INPUT_LINE		= "input_main";
+local CHAT_INPUT			= "input";
+local CHAT_MAIN			= "main";
 
-CHAT_MOD = {
+local CHAT_MOD = {
 	--[[ stores children in CHAT_MOD[value] (by name) ]]--
 	children = {
 		["HudChatHistory"] 		= CHAT_HISTORY;
@@ -134,7 +134,7 @@ function CHAT_MOD:Init(chat)
 	end);
 	self:Save(chat);
 	
-	hook.Run("ChatModInitialize", self);
+	hook.Run("ChatModInitialize", chat);
 end
 
 hook.Add("PlayerBindPress", "ObtainChat", function(p, bind, isdown)
