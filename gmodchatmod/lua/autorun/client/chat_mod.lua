@@ -13,7 +13,50 @@ CHAT_MOD = {
 		["ChatInputLine"]		= CHAT_INPUT_LINE;
 	};
 	panels = {};
+	
+	old = {};
 };
+
+function CHAT_MOD:Resize(w,h)
+	
+	local main = self:Get(CHAT_MAIN);
+	local filter = self:Get(CHAT_FILTER_BUTTON);
+	local input = self:Get(CHAT_INPUT);
+	local input_main = self:Get(CHAT_INPUT_LINE);
+	local history = self:Get(CHAT_HISTORY);
+	
+	local wdif = w - main:GetWide();
+	local hdif = h - main:GetTall();
+	
+	main:SetTall(h);
+	main:SetWide(w);
+	
+	history:SetWide(history:GetWide() + wdif);
+	history:SetTall(history:GetTall() + hdif);
+	
+	input_main:SetWide(input_main:GetWide() + wdif);
+	input:SetWide(input:GetWide() + wdif);
+	
+	local x,y = filter:GetPos();
+	filter:SetPos(x + wdif, y);
+end
+
+function chat.Resize(w,h)
+	CHAT_MOD:Resize(w,h);
+end
+
+--[[ please don't use this! ]]--
+function CHAT_MOD:Save(panel)
+	local old = self.old;
+	local x,y = panel:GetPos();
+	old[panel] = old[panel] or {
+		x = x;
+		y = y;
+		w = panel:GetWide();
+		h = panel:GetTall();
+		font = panel:GetFont();
+	};
+end
 
 function CHAT_MOD:SetFont(font)
 	if(not IsValid(self:Get(CHAT_INPUT))) then 
@@ -32,30 +75,53 @@ function CHAT_MOD:SetFont(font)
 	return true;
 end
 
+function chat.SetFont(font)
+	CHAT_MOD:SetFont(font);
+end
+
 function CHAT_MOD:Get(name)
 	return self.panels[name];
 end
 
+function chat.GetInput()		return CHAT_MOD:Get(CHAT_INPUT); 			end
+function chat.GetInputLine() 	return CHAT_MOD:Get(CHAT_INPUT_LINE); 		end
+function chat.GetHistory() 		return CHAT_MOD:Get(CHAT_HISTORY); 			end
+function chat.GetPanel() 		return CHAT_MOD:Get(CHAT_MAIN); 			end
+function chat.GetFilterButton()	return CHAT_MOD:Get(CHAT_FILTER_BUTTON);	end
+
+function CHAT_MOD:ForChildren(pnl, fn)
+	if(not pnl:HasChildren()) then return; end
+	for k,v in pairs(pnl:GetChildren()) do
+		fn(v);
+		self:ForChildren(v, fn);
+	end
+end
+
 function CHAT_MOD:Init(chat)
 	self.panels[CHAT_MAIN] = chat;
-	local children = chat:GetChildren();
+	
 	local searching = self.children;
-	for i = 1, #children do
-		local v = children[i];
+	
+	for i,v in pairs(chat:GetChildren()) do
 		local index = searching[v:GetName()];
 		if(index) then
 			self.panels[index] = v;
 		end
 	end
-	local input_main = self.panels[CHAT_INPUT_LINE];
-	if(IsValid(input_main)) then
-		children = input_main:GetChildren();
-		for i = 1, #children do
-			if(children[i]:GetName() == "ChatInput") then
-				self.panels[CHAT_INPUT] = children[i];
-			end
+	
+	local input_main = self:Get(CHAT_INPUT_LINE);
+	
+	for i,v in pairs(input_main:GetChildren()) do
+		if(v:GetName() == "ChatInput") then
+			self.panels[CHAT_INPUT] = v;
 		end
 	end
+	
+	self:ForChildren(chat, function(v)
+		self:Save(v);
+	end);
+	self:Save(chat);
+	
 	hook.Run("ChatModInitialize", self);
 end
 
@@ -71,67 +137,13 @@ hook.Add("PlayerBindPress", "ObtainChat", function(p, bind, isdown)
 	end
 end);
 
---[[
-	example:
-		
-
-local old = {
-};
-
-local function setup(pnl)
-	local x, y = pnl:GetPos();
-	old[pnl] = old[pnl] or {
-		x = x;
-		y = y;
-		w = pnl:GetWide();
-		h = pnl:GetTall();
-	};
-end
-
-local width = ScrW() / 4 * 3;
-hook.Add("ChatModInitialize", "Example", function(chat)
-	chat:SetFont("TargetIDSmall");
-	local function background(self)
-		surface.SetDrawColor(0,100,0,100);	
-		surface.DrawRect(0,0,self:GetSize());
-	end
-	
-	local main = chat:Get(CHAT_MAIN);
-	local history = chat:Get(CHAT_HISTORY);
-	local input = chat:Get(CHAT_INPUT);
-	local input_main = chat:Get(CHAT_INPUT_LINE);
-	local filters = chat:Get(CHAT_FILTER_BUTTON);
-	
-	setup(main);
-	setup(history);
-	setup(input);
-	setup(input_main);
-	setup(filters);
-	
-	local wdif = width - main:GetWide();
-	
-	input.Paint = background;
-	history.Paint = background;
-	
-	local x,y = main:GetPos();
-	main:SetPos(ScrW() / 2 - width / 2, y);
-	local difference = width - main:GetWide();
-	main:SetWide(width);
-	
-	history:SetWide(history:GetWide() + wdif);
-	input_main:SetWide(input_main:GetWide() + wdif);
-	input:SetWide(input:GetWide() + wdif);
-	x,y = filters:GetPos();
-	filters:SetPos(filters:GetParent():GetWide() - filters:GetWide() - 2, y);
-	
-	local btn = vgui.Create("DButton", chat:Get(CHAT_MAIN));
-end);
-
-hook.Add("Shutdown", "Example", function()
-	for k,v in pairs(old) do
-		k:SetWide(v.w);
-		k:SetTall(v.h);
+hook.Add("ShutDown", "ChatMod", function()
+	local self = CHAT_MOD;
+	for k,v in pairs(self.old) do
+		print(tostring(k));
 		k:SetPos(v.x, v.y);
+		k:SetTall(v.h);
+		k:SetWide(v.w);
+		k:SetFontInternal(v.font or "");
 	end
 end);
-]]--
