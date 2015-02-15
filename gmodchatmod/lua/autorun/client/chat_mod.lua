@@ -18,6 +18,13 @@ local CHAT_MOD = {
 };
 
 hook.Add("StartChat", "TrackChat", function()
+	if(not IsValid(CHAT_MOD:Get(CHAT_MAIN))) then
+		hook.Add("Think", "TrackChat", function()
+			if(not IsValid(vgui.GetKeyboardFocus())) then return; end
+			CHAT_MOD:Init(vgui.GetKeyboardFocus():GetParent():GetParent());
+			hook.Remove("Think", "TrackChat");
+		end);
+	end
 	CHAT_MOD.open = true;
 end);
 
@@ -144,18 +151,6 @@ function CHAT_MOD:Init(chat)
 	
 	hook.Run("ChatModInitialize", chat);
 end
-
-hook.Add("PlayerBindPress", "ObtainChat", function(p, bind, isdown)
-	if(isdown) then
-		if(bind == "messagemode" or bind == "messagemode2") then
-			timer.Simple(0.2, function()
-				if(not IsValid(vgui.GetKeyboardFocus())) then return; end
-				CHAT_MOD:Init(vgui.GetKeyboardFocus():GetParent():GetParent());
-				hook.Remove("PlayerBindPress", "ObtainChat");
-			end);
-		end
-	end
-end);
 
 hook.Add("ShutDown", "ChatMod", function()
 	local self = CHAT_MOD;
