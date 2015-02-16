@@ -52,6 +52,30 @@ Returns if chat is open
 Returns if the keyboard focus is the input box
 
 
+#History panel functions
+
+
+`chat.Append(text)`
+
+Appends `text` to the history panel
+
+`chat.SetColor(color)`
+
+Sets the color for upcoming `chat.Append(text)`
+
+`chat.InsertClickableText(id)`
+`chat.EndClickableText()`
+
+Used for clickable text (broken?) Check the garrysmod wiki.
+
+`chat.InsertStandardFade()`
+
+Inserts the standard fade for upcoming text from `chat.Append`
+
+
+#Hooks
+
+
 hook `ChatModInitialize`
 
 called when the chat mod initializes (usually after someone opens chat)

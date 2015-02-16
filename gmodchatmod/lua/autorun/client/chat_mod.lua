@@ -32,6 +32,28 @@ hook.Add("FinishChat", "TrackChat", function()
 	CHAT_MOD.open = false;
 end);
 
+local sustain = GetConVar("hud_saytext_time");
+
+function chat.InsertStandardFade()
+	chat.GetHistory():InsertFade(sustain:GetFloat(), 2.5);
+end
+
+function chat.Append(text)
+	chat.GetHistory():AppendText(text);
+end
+
+function chat.InsertClickableText(value)
+	chat.GetHistory():InsertClickableTextStart(value);
+end
+
+function chat.EndClickableText()
+	chat.GetHistory():InsertClickableTextEnd();
+end
+
+function chat.SetColor(col)
+	chat.GetHistory():InsertColorChange(col.r, col.g, col.b, col.a);
+end
+
 function chat.IsOpen()
 	return CHAT_MOD.open;
 end
