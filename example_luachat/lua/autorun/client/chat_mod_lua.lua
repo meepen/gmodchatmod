@@ -34,7 +34,7 @@ hook.Add("ChatModInitialize", "AddLuaButton", function()
 			local alpha_mod = chat.GetInput():GetAlpha();
 			surface.SetTextColor(255,255,255,alpha_mod);
 			
-			surface.SetFont(filter_btn:GetFont() or "ChatFont");
+			surface.SetFont(filter_btn:GetFont() == "<Unknown font>" and "ChatFont" or filter_btn:GetFont());
 			local tw,th = surface.GetTextSize(texts[onlua]);
 			surface.SetTextPos(w/2 - tw/2, h/2 - th/2);
 			surface.DrawText(texts[onlua]);
