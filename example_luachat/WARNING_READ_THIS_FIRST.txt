@@ -1,0 +1,2 @@
+This addon is **EXPERIMENTAL**
+Use it at your own server's risk!

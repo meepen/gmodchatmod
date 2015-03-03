@@ -79,3 +79,7 @@ Inserts the standard fade for upcoming text from `chat.Append`
 hook `ChatModInitialize`
 
 called when the chat mod initializes (usually after someone opens chat)
+
+hook `ChatResized`
+
+called when chat is resized with `chat.Resize`

@@ -88,6 +88,8 @@ function CHAT_MOD:Resize(w,h)
 	
 	local x,y = filter:GetPos();
 	filter:SetPos(x + wdif, y);
+	
+	hook.Call("ChatResized");
 end
 
 function chat.Resize(w,h)
